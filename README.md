@@ -1,50 +1,90 @@
-# Loan Eligibility Procedures
+# Loan Eligibility Microservice
 
-This project contains a set of stored procedures designed to determine the eligibility of customers for automobile loans based on their income and collateral value.
+This project contains a Java-based Spring Boot microservice designed to determine the eligibility of customers for automobile loans based on their income and collateral value.
 
 ## Project Structure
 
-- **procedures/**: Contains stored procedures
-  - sp_CalculateEligibility.sql: Main eligibility calculation with risk assessment
-  - sp_CheckCollateral.sql: Collateral validation
-  - sp_CheckIncome.sql: Income verification
-  - sp_GetLoanCriteria.sql: Loan criteria retrieval
-  - sp_GetRepaymentTerms.sql: Payment terms calculation
-- **tables/**: Database schema definitions
-- **main.sql**: Entry point for execution
+- **src/main/java/com/loan/eligibility/**: Contains Java classes for the microservice
+  - **controller/**: REST controllers
+  - **service/**: Business logic services
+  - **repository/**: Data access repositories
+  - **model/**: Entity classes
+- **src/main/resources/**: Configuration files
+- **src/test/java/com/loan/eligibility/**: Unit tests
+- **Dockerfile**: Dockerfile for containerizing the application
+- **docs/**: Documentation for business logic
 
-## Advanced Features
+## Building and Running the Microservice
 
-- Transaction Management
-- Cursor-based Historical Data Analysis
-- Temporary Tables for Calculation Tracking
-- Dynamic SQL for Flexible Criteria
-- Custom Risk Scoring Functions
-- Comprehensive Error Handling
+### Prerequisites
 
-## Technical Details
+- Java 11 or higher
+- Docker (optional, for containerization)
 
-### Error Handling
-- SQLEXCEPTION handlers
-- Transaction rollback mechanisms
-- Custom error states and messages
+### Building the Application
 
-### Performance Considerations
-- Temporary tables for intermediate calculations
-- Cursor optimization for historical data
-- Transaction management for data consistency
-
-## Setup Instructions
-
-1. Database Setup:
-```sql
-source /path/to/tables/*.sql
-source /path/to/procedures/*.sql
+1. Clone the repository:
+```bash
+git clone https://github.com/mohan-the-octocat/loan-eligibility-procedures.git
+cd loan-eligibility-procedures
 ```
 
-## Usage
+2. Build the application using Maven:
+```bash
+./mvnw clean package
+```
 
-Call the appropriate stored procedures to assess customer eligibility based on their income and collateral. The results will indicate the eligibility status, minimum and maximum loan amounts, and repayment terms.
+### Running the Application
+
+1. Run the application locally:
+```bash
+java -jar target/loan-eligibility-0.0.1-SNAPSHOT.jar
+```
+
+2. Run the application using Docker:
+```bash
+docker build -t loan-eligibility .
+docker run -p 8080:8080 loan-eligibility
+```
+
+## API Endpoints
+
+### Calculate Eligibility
+
+- **URL**: `/eligibility/calculate`
+- **Method**: `POST`
+- **Request Body**:
+```json
+{
+  "customerId": 1,
+  "customerIncome": 50000.00,
+  "collateralValue": 25000.00,
+  "creditScore": 700
+}
+```
+- **Response**:
+```json
+{
+  "isEligible": true,
+  "minAmount": 10000.00,
+  "maxAmount": 40000.00,
+  "riskScore": 0.75
+}
+```
+
+### Get Repayment Terms
+
+- **URL**: `/eligibility/repayment-terms`
+- **Method**: `GET`
+- **Query Parameters**: `loanAmount`
+- **Response**:
+```json
+{
+  "termMonths": 60,
+  "interestRate": 0.05,
+  "monthlyPayment": 500.00
+}
+```
 
 ## License
 
