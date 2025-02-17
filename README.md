@@ -1,50 +1,101 @@
-# Loan Eligibility Procedures
+# Loan Eligibility Microservice
 
-This project contains a set of stored procedures designed to determine the eligibility of customers for automobile loans based on their income and collateral value.
+This project contains a Java-based Spring Boot microservice designed to determine the eligibility of customers for automobile loans based on their income and collateral value.
 
 ## Project Structure
 
-- **procedures/**: Contains stored procedures
-  - sp_CalculateEligibility.sql: Main eligibility calculation with risk assessment
-  - sp_CheckCollateral.sql: Collateral validation
-  - sp_CheckIncome.sql: Income verification
-  - sp_GetLoanCriteria.sql: Loan criteria retrieval
-  - sp_GetRepaymentTerms.sql: Payment terms calculation
-- **tables/**: Database schema definitions
-- **main.sql**: Entry point for execution
+- **src/main/java/**: Contains Java classes for the microservice
+  - **controller/**: REST controllers for handling API requests
+  - **service/**: Service classes for business logic
+  - **repository/**: Repository interfaces for data access
+  - **model/**: Entity classes for database tables
+- **src/main/resources/**: Configuration files
+  - application.properties: Database and JPA properties
+- **Dockerfile**: Dockerfile for containerizing the application
 
-## Advanced Features
+## API Endpoints
 
-- Transaction Management
-- Cursor-based Historical Data Analysis
-- Temporary Tables for Calculation Tracking
-- Dynamic SQL for Flexible Criteria
-- Custom Risk Scoring Functions
-- Comprehensive Error Handling
+### Calculate Eligibility
+- **URL**: `/api/calculate-eligibility`
+- **Method**: `POST`
+- **Request Body**:
+  ```json
+  {
+    "customerIncome": 50000.00,
+    "collateralValue": 25000.00
+  }
+  ```
+- **Response**:
+  ```json
+  {
+    "eligible": true,
+    "maxLoanAmount": 40000.00
+  }
+  ```
 
-## Technical Details
+### Get Repayment Terms
+- **URL**: `/api/repayment-terms/{loanAmount}`
+- **Method**: `GET`
+- **Response**:
+  ```json
+  {
+    "termMonths": 60,
+    "interestRate": 0.05,
+    "monthlyPayment": 500.00
+  }
+  ```
 
-### Error Handling
-- SQLEXCEPTION handlers
-- Transaction rollback mechanisms
-- Custom error states and messages
+## Docker Usage
 
-### Performance Considerations
-- Temporary tables for intermediate calculations
-- Cursor optimization for historical data
-- Transaction management for data consistency
+### Build Docker Image
+```sh
+docker build -t loan-eligibility .
+```
+
+### Run Docker Container
+```sh
+docker run -p 8080:8080 loan-eligibility
+```
+
+## Sequence Diagrams
+
+### Calculate Eligibility Sequence Diagram
+```plaintext
+Customer -> EligibilityController: POST /api/calculate-eligibility
+EligibilityController -> EligibilityService: calculateEligibility(request)
+EligibilityService -> IncomeRepository: findByCustomerId(customerId)
+EligibilityService -> CollateralRepository: findByCustomerId(customerId)
+EligibilityService -> LoanCriteriaRepository: findById(1)
+EligibilityService -> EligibilityController: EligibilityResponse
+EligibilityController -> Customer: EligibilityResponse
+```
+
+### Get Repayment Terms Sequence Diagram
+```plaintext
+Customer -> EligibilityController: GET /api/repayment-terms/{loanAmount}
+EligibilityController -> EligibilityService: getRepaymentTerms(loanAmount)
+EligibilityService -> RepaymentTermsRepository: findByLoanAmount(loanAmount)
+EligibilityService -> EligibilityController: RepaymentTermsResponse
+EligibilityController -> Customer: RepaymentTermsResponse
+```
 
 ## Setup Instructions
 
-1. Database Setup:
-```sql
-source /path/to/tables/*.sql
-source /path/to/procedures/*.sql
+1. Clone the repository:
+```sh
+git clone https://github.com/mohan-the-octocat/loan-eligibility-procedures.git
+cd loan-eligibility-procedures
 ```
 
-## Usage
+2. Build the application:
+```sh
+./mvnw clean package
+```
 
-Call the appropriate stored procedures to assess customer eligibility based on their income and collateral. The results will indicate the eligibility status, minimum and maximum loan amounts, and repayment terms.
+3. Run the application:
+```sh
+java -jar target/loan-eligibility-0.0.1-SNAPSHOT.jar
+```
 
 ## License
 
