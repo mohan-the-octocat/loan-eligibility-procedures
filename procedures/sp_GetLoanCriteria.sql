@@ -1,4 +1,4 @@
-CREATE PROCEDURE sp_GetLoanCriteria()
+CREATE OR REPLACE PROCEDURE sp_GetLoanCriteria()
 BEGIN
     SELECT 
         criteria_id,
