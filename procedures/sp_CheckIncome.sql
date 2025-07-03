@@ -1,9 +1,9 @@
-CREATE PROCEDURE sp_CheckIncome(
-    IN customer_income DECIMAL(10,2),
-    OUT is_eligible BOOLEAN
+CREATE OR REPLACE PROCEDURE sp_CheckIncome(
+    customer_income NUMERIC,
+    OUT is_eligible BOOL
 )
 BEGIN
-    DECLARE min_income DECIMAL(10,2);
+    DECLARE min_income NUMERIC;
     
     SELECT income_threshold INTO min_income
     FROM loan_criteria
