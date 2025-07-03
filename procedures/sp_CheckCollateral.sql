@@ -1,9 +1,9 @@
-CREATE PROCEDURE sp_CheckCollateral(
-    IN collateral_value DECIMAL(10,2),
-    OUT is_eligible BOOLEAN
+CREATE OR REPLACE PROCEDURE sp_CheckCollateral(
+    collateral_value NUMERIC,
+    OUT is_eligible BOOL
 )
 BEGIN
-    DECLARE min_collateral DECIMAL(10,2);
+    DECLARE min_collateral NUMERIC;
     
     SELECT collateral_threshold INTO min_collateral
     FROM loan_criteria
